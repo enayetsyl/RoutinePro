@@ -28,12 +28,26 @@ function checkConflicts(schedule, days, classNames, timeSlots) {
 
 // Map each subject to a specific background color
 const SUBJECT_COLORS = {
-  English: "#C2F0C2", // a light green
-  Math: "#FFC2C2",    // a light red
-  Bangla: "#C2E0FF",  // a light blue
-  Science: "#FFFAC2", // a pale yellow
-  // etc.
+  Hifz: "#D1C4E9",             // Light purple
+  Ammapara: "#FFECB3",         // Light amber
+  Najera: "#C8E6C9",           // Light green
+  Qaida: "#FFCDD2",            // Light pink
+  Arabic: "#BBDEFB",           // Light blue
+  Bangla: "#C2E0FF",           // Light blue variant (as before)
+  English: "#C2F0C2",          // Light green variant (as before)
+  Math: "#FFC2C2",             // Light red variant (as before)
+  Science: "#FFFAC2",          // Pale yellow
+  BGS: "#E1BEE7",              // Light purple variant
+  Deen: "#D7CCC8",             // Light gray-brown
+  Tiffin: "#FFE082",           // Light yellow-orange
+  Lunch: "#FFCC80",            // Light orange
+  Meal: "#CFD8DC",             // Light blue-gray
+  "Hifz Revision": "#B39DDB",   // Purple (revision)
+  "Ammapara Revision": "#FFE0B2", // Pastel orange (revision)
+  "Najera Revision": "#A5D6A7",   // Pastel green (revision)
+  "Qaida Revision": "#EF9A9A"    // Pastel red (revision)
 };
+
 
 export default function DynamicScheduler() {
   // ---------------------------
