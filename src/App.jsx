@@ -26,27 +26,35 @@ function checkConflicts(schedule, days, classNames, timeSlots) {
   return "";
 }
 
+// A small helper to read from localStorage or use a default
+function getLocalStorageOrDefault(key, defaultValue) {
+  const saved = localStorage.getItem(key);
+  return saved ? JSON.parse(saved) : defaultValue;
+}
+
 // Map each subject to a specific background color
 const SUBJECT_COLORS = {
-  Hifz:               "#85f013",  // Red lighten 3
-  Ammapara:           "#f0ec13",  // Pink lighten 3
-  Najera:             "#13f0ec",  // Purple lighten 3
-  Qaida:              "#1385f0",  // Deep Purple lighten 3
-  Arabic:             "#1300f7",  // Indigo lighten 3
-  Bangla:             "#90caf9",  // Blue lighten 3
-  English:            "#ec13f0",  // Light Blue lighten 3
-  Math:               "#f81f0b",  // Cyan lighten 3
-  Science:            "#80cbc4",  // Teal lighten 3
-  BGS:                "#a5d6a7",  // Green lighten 3
-  Deen:               "#f01385",  // Light Green lighten 3
-  Tiffin:             "#ff5733",  // Lime lighten 3
-  Lunch:              "#ff5733",  // Yellow lighten 3
-  Meal:               "#ff5733",  // Amber lighten 3
-  "Hifz Revision":    "#ffcc80",  // Orange lighten 3
-  "Ammapara Revision":"#ffab91",  // Deep Orange lighten 3
-  "Najera Revision":  "#bcaaa4",  // Brown lighten 3
-  "Qaida Revision":   "#cfd8dc"   // Blue Grey lighten 3
+  Hifz:               "#f0ec13",  // Red
+  Ammapara:           "#f39c12",  // Orange
+  Najera:             "#34495e",  // Purple
+  Qaida:              "#3498db",  // Blue
+  Arabic:             "#1300f7",  // Teal
+  Bangla:             "#2ecc71",  // Green
+  English:            "#d35400",  // Dark Orange
+  Math:               "#8e44ad",  // Violet
+  Science:            "#16a085",  // Dark Cyan
+  BGS:                "#f1c40f",  // Yellow
+  Deen:               "#c0392b",  // Crimson
+  Tiffin:             "#f81f0b",  // Dark Blue Grey
+  Lunch:              "#f81f0b",  // Emerald Green
+  Meal:               "#f81f0b",  // Carrot Orange
+  "Hifz Revision":    "#bdc3c7",  // Silver
+  "Ammapara Revision":"#95a5a6",  // Concrete Grey
+  "Najera Revision":  "#7f8c8d",  // Slate Grey
+  "Qaida Revision":   "#2c3e50"   // Midnight Blue
 };
+
+
 
 
 
@@ -55,17 +63,27 @@ export default function DynamicScheduler() {
   // 1) CONFIGURATION STATE
   // ---------------------------
   const [days, setDays] = useState(defaultDays);
+  const [hasGeneratedSchedule, setHasGeneratedSchedule] = useState(
+    () => getLocalStorageOrDefault("hasGeneratedSchedule", false)
+  );
 
-  // Classes
-  const [numberOfClasses, setNumberOfClasses] = useState(2);
-  const [classNames, setClassNames] = useState(["Nursery", "KG"]);
 
-  // Periods (time slots)
-  const [numberOfPeriods, setNumberOfPeriods] = useState(2);
-  const [timeSlots, setTimeSlots] = useState([
+ // Read from localStorage if available, otherwise use your old defaults
+ const [numberOfClasses, setNumberOfClasses] = useState(
+  () => getLocalStorageOrDefault("numberOfClasses", 2)
+);
+const [classNames, setClassNames] = useState(
+  () => getLocalStorageOrDefault("classNames", ["Nursery", "KG"])
+);
+const [numberOfPeriods, setNumberOfPeriods] = useState(
+  () => getLocalStorageOrDefault("numberOfPeriods", 2)
+);
+const [timeSlots, setTimeSlots] = useState(
+  () => getLocalStorageOrDefault("timeSlots", [
     { start: "7:30", end: "8:30" },
     { start: "8:30", end: "9:40" },
-  ]);
+  ])
+);
 
   function getSubjectColor(subject) {
     if (!subject) return "#FFFFFF"; // White for empty/no subject
@@ -78,21 +96,35 @@ export default function DynamicScheduler() {
   // 2) SCHEDULE STATE
   // ---------------------------
   // schedule[className][day][slotIndex] = { subject: "", teacher: "" }
-  const [schedule, setSchedule] = useState(null);
+  const [schedule, setSchedule] = useState(
+    () => getLocalStorageOrDefault("schedule", null)
+  );
   const [error, setError] = useState("");
 
     // ---------------------------
   // Retrieve saved data on mount
   // ---------------------------
   useEffect(() => {
+    const savedNumberOfPeriods = localStorage.getItem("numberOfPeriods");
+  if (savedNumberOfPeriods) {
+    setNumberOfPeriods(JSON.parse(savedNumberOfPeriods));
+  }
+
+  const savedNumberOfClasses = localStorage.getItem("numberOfClasses");
+  if (savedNumberOfClasses) {
+    setNumberOfClasses(JSON.parse(savedNumberOfClasses));
+  }
+
     const savedSchedule = localStorage.getItem("schedule");
     if (savedSchedule) {
       setSchedule(JSON.parse(savedSchedule));
     }
+
     const savedClassNames = localStorage.getItem("classNames");
     if (savedClassNames) {
       setClassNames(JSON.parse(savedClassNames));
     }
+
     const savedTimeSlots = localStorage.getItem("timeSlots");
     if (savedTimeSlots) {
       setTimeSlots(JSON.parse(savedTimeSlots));
@@ -102,6 +134,11 @@ export default function DynamicScheduler() {
   // ---------------------------
   // Save schedule when it changes
   // ---------------------------
+
+  useEffect(() => {
+    localStorage.setItem("hasGeneratedSchedule", JSON.stringify(hasGeneratedSchedule));
+  }, [hasGeneratedSchedule]);
+
   useEffect(() => {
     if (schedule) {
       localStorage.setItem("schedule", JSON.stringify(schedule));
@@ -116,6 +153,14 @@ export default function DynamicScheduler() {
   useEffect(() => {
     localStorage.setItem("timeSlots", JSON.stringify(timeSlots));
   }, [timeSlots]);
+
+  useEffect(() => {
+    localStorage.setItem("numberOfPeriods", JSON.stringify(numberOfPeriods));
+  }, [numberOfPeriods]);
+
+  useEffect(() => {
+    localStorage.setItem("numberOfClasses", JSON.stringify(numberOfClasses));
+  }, [numberOfClasses]);
 
   // ---------------------------
   // 3) HANDLERS: CONFIG FORM
@@ -170,6 +215,14 @@ export default function DynamicScheduler() {
     });
   }, [numberOfPeriods]);
 
+  // If there's a schedule in localStorage (non-null), we can ensure hasGeneratedSchedule = true
+  // (If you prefer controlling this strictly via "Generate" button, you can remove this.)
+  useEffect(() => {
+    if (schedule) {
+      setHasGeneratedSchedule(true);
+    }
+  }, [schedule]);
+
   // Create a fresh schedule object
   const createInitialSchedule = () => {
     const newSchedule = {};
@@ -189,7 +242,32 @@ export default function DynamicScheduler() {
   const handleGenerateSchedule = () => {
     setSchedule(createInitialSchedule());
     setError("");
+    setHasGeneratedSchedule(true);
   };
+  
+
+  const handleCreateNewRoutine = () => {
+    // Option 1: Clear localStorage entirely, or remove only your keys
+    localStorage.removeItem("schedule");
+    localStorage.removeItem("classNames");
+    localStorage.removeItem("timeSlots");
+    localStorage.removeItem("numberOfClasses");
+    localStorage.removeItem("numberOfPeriods");
+    localStorage.removeItem("hasGeneratedSchedule");
+    
+    // Option 2: Reset states back to defaults
+    setNumberOfClasses(2);
+    setClassNames(["Nursery", "KG"]);
+    setNumberOfPeriods(2);
+    setTimeSlots([
+      { start: "7:30", end: "8:30" },
+      { start: "8:30", end: "9:40" },
+    ]);
+    setSchedule(null);
+    setError("");
+    setHasGeneratedSchedule(false);
+  };
+  
 
   // ---------------------------
   // 4) SCHEDULE EDITING
@@ -308,6 +386,7 @@ export default function DynamicScheduler() {
       <h1 className="text-2xl font-bold">Dynamic Scheduler</h1>
 
       {/* CONFIGURATION FORM */}
+      {!hasGeneratedSchedule ? (
       <div className="bg-gray-50 p-4 rounded shadow">
         <h2 className="text-xl font-semibold mb-4">Configuration</h2>
         <div className="flex flex-col space-y-4">
@@ -393,6 +472,18 @@ export default function DynamicScheduler() {
           </button>
         </div>
       </div>
+    ) : (
+      // === If the schedule is generated, hide config and show a button ===
+      <div>
+        <button
+          onClick={handleCreateNewRoutine}
+          className="bg-blue-600 text-white px-4 py-2 rounded mt-4"
+        >
+          Create New Routine
+        </button>
+      </div>
+    )}
+
 
       {/* ERROR MESSAGE */}
       {error && (
@@ -485,13 +576,6 @@ export default function DynamicScheduler() {
       )}
       {schedule && (
         <div>
-          {/* Render your existing schedule tables here */}
-          {classNames.map((className) => (
-            <div key={className}>{/* table for each class */}</div>
-          ))}
-
-          {/* Button to download XLSX, etc. */}
-
           {/* === NEW: Teacher Assignments Chart === */}
           <TeacherDayChart
             schedule={schedule}
