@@ -28,25 +28,26 @@ function checkConflicts(schedule, days, classNames, timeSlots) {
 
 // Map each subject to a specific background color
 const SUBJECT_COLORS = {
-  Hifz: "#D1C4E9",             // Light purple
-  Ammapara: "#FFECB3",         // Light amber
-  Najera: "#C8E6C9",           // Light green
-  Qaida: "#FFCDD2",            // Light pink
-  Arabic: "#BBDEFB",           // Light blue
-  Bangla: "#C2E0FF",           // Light blue variant (as before)
-  English: "#C2F0C2",          // Light green variant (as before)
-  Math: "#FFC2C2",             // Light red variant (as before)
-  Science: "#FFFAC2",          // Pale yellow
-  BGS: "#E1BEE7",              // Light purple variant
-  Deen: "#D7CCC8",             // Light gray-brown
-  Tiffin: "#FFE082",           // Light yellow-orange
-  Lunch: "#FFCC80",            // Light orange
-  Meal: "#CFD8DC",             // Light blue-gray
-  "Hifz Revision": "#B39DDB",   // Purple (revision)
-  "Ammapara Revision": "#FFE0B2", // Pastel orange (revision)
-  "Najera Revision": "#A5D6A7",   // Pastel green (revision)
-  "Qaida Revision": "#EF9A9A"    // Pastel red (revision)
+  Hifz:               "#85f013",  // Red lighten 3
+  Ammapara:           "#f0ec13",  // Pink lighten 3
+  Najera:             "#13f0ec",  // Purple lighten 3
+  Qaida:              "#1385f0",  // Deep Purple lighten 3
+  Arabic:             "#1300f7",  // Indigo lighten 3
+  Bangla:             "#90caf9",  // Blue lighten 3
+  English:            "#ec13f0",  // Light Blue lighten 3
+  Math:               "#f81f0b",  // Cyan lighten 3
+  Science:            "#80cbc4",  // Teal lighten 3
+  BGS:                "#a5d6a7",  // Green lighten 3
+  Deen:               "#f01385",  // Light Green lighten 3
+  Tiffin:             "#ff5733",  // Lime lighten 3
+  Lunch:              "#ff5733",  // Yellow lighten 3
+  Meal:               "#ff5733",  // Amber lighten 3
+  "Hifz Revision":    "#ffcc80",  // Orange lighten 3
+  "Ammapara Revision":"#ffab91",  // Deep Orange lighten 3
+  "Najera Revision":  "#bcaaa4",  // Brown lighten 3
+  "Qaida Revision":   "#cfd8dc"   // Blue Grey lighten 3
 };
+
 
 
 export default function DynamicScheduler() {
