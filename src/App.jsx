@@ -80,6 +80,42 @@ export default function DynamicScheduler() {
   const [schedule, setSchedule] = useState(null);
   const [error, setError] = useState("");
 
+    // ---------------------------
+  // Retrieve saved data on mount
+  // ---------------------------
+  useEffect(() => {
+    const savedSchedule = localStorage.getItem("schedule");
+    if (savedSchedule) {
+      setSchedule(JSON.parse(savedSchedule));
+    }
+    const savedClassNames = localStorage.getItem("classNames");
+    if (savedClassNames) {
+      setClassNames(JSON.parse(savedClassNames));
+    }
+    const savedTimeSlots = localStorage.getItem("timeSlots");
+    if (savedTimeSlots) {
+      setTimeSlots(JSON.parse(savedTimeSlots));
+    }
+  }, []);
+
+  // ---------------------------
+  // Save schedule when it changes
+  // ---------------------------
+  useEffect(() => {
+    if (schedule) {
+      localStorage.setItem("schedule", JSON.stringify(schedule));
+    }
+  }, [schedule]);
+
+  // Save classNames and timeSlots when they change
+  useEffect(() => {
+    localStorage.setItem("classNames", JSON.stringify(classNames));
+  }, [classNames]);
+
+  useEffect(() => {
+    localStorage.setItem("timeSlots", JSON.stringify(timeSlots));
+  }, [timeSlots]);
+
   // ---------------------------
   // 3) HANDLERS: CONFIG FORM
   // ---------------------------
